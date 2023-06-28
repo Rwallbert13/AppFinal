@@ -6,17 +6,70 @@ import javax.swing.table.DefaultTableModel;
 public class FrontFinal extends javax.swing.JFrame {
 
     ArrayList<Departamento> ListaDep;
-
+    String modoDep;
 
     public FrontFinal() {
         initComponents();
         setLocationRelativeTo(null);
         ListaDep = new ArrayList();
-        btnSalvarDep.setEnabled(false);
-        btnCancelarDep.setEnabled(false);
-        txtCodigo.setEnabled(false);
-        txtNome.setEnabled(false);
+        modoDep = "Navegar";
+        ManipulaInterfaceDep();
+    }
 
+    public void ManipulaInterfaceDep() {
+        switch (modoDep) {
+            case "Navegar":
+                btnSalvarDep.setEnabled(false);
+                btnCancelarDep.setEnabled(false);
+                txtCodigo.setEnabled(false);
+                txtNome.setEnabled(false);
+                btnNovoDep.setEnabled(true);
+                btnEditarDep.setEnabled(false);
+                btnExcluirDep.setEnabled(false);
+                break;
+
+            case "Novo":
+                btnSalvarDep.setEnabled(true);
+                btnCancelarDep.setEnabled(true);
+                txtCodigo.setEnabled(true);
+                txtNome.setEnabled(true);
+                btnNovoDep.setEnabled(false);
+                btnEditarDep.setEnabled(false);
+                btnExcluirDep.setEnabled(false);
+                break;
+
+            case "Editar":
+                btnSalvarDep.setEnabled(true);
+                btnCancelarDep.setEnabled(true);
+                txtCodigo.setEnabled(true);
+                txtNome.setEnabled(true);
+                btnNovoDep.setEnabled(true);
+                btnEditarDep.setEnabled(false);
+                btnExcluirDep.setEnabled(false);
+                break;
+
+            case "Excluir":
+                btnSalvarDep.setEnabled(false);
+                btnCancelarDep.setEnabled(false);
+                txtCodigo.setEnabled(false);
+                txtNome.setEnabled(false);
+                btnNovoDep.setEnabled(true);
+                btnEditarDep.setEnabled(false);
+                btnExcluirDep.setEnabled(false);
+                break;
+
+            case "Selecao":
+                btnSalvarDep.setEnabled(false);
+                btnCancelarDep.setEnabled(false);
+                txtCodigo.setEnabled(false);
+                txtNome.setEnabled(false);
+                btnNovoDep.setEnabled(true);
+                btnEditarDep.setEnabled(true);
+                btnExcluirDep.setEnabled(true);
+                break;
+            default:
+                System.out.println("Modo inválido");
+        }
     }
 
     public void LoadTableDep() {
@@ -32,6 +85,7 @@ public class FrontFinal extends javax.swing.JFrame {
         tbl_dep_dpts.getColumnModel().getColumn(0).setPreferredWidth(50);
         tbl_dep_dpts.getColumnModel().getColumn(1).setPreferredWidth(200);
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -89,6 +143,11 @@ public class FrontFinal extends javax.swing.JFrame {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        tbl_dep_dpts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_dep_dptsMouseClicked(evt);
             }
         });
         jScrollPane2.setViewportView(tbl_dep_dpts);
@@ -169,8 +228,18 @@ public class FrontFinal extends javax.swing.JFrame {
         });
 
         btnEditarDep.setText("Editar");
+        btnEditarDep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarDepActionPerformed(evt);
+            }
+        });
 
         btnExcluirDep.setText("Excluir");
+        btnExcluirDep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirDepActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout PanelDepartamantosLayout = new javax.swing.GroupLayout(PanelDepartamantos);
         PanelDepartamantos.setLayout(PanelDepartamantosLayout);
@@ -383,10 +452,22 @@ public class FrontFinal extends javax.swing.JFrame {
 
     private void btnSalvarDepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarDepActionPerformed
         int cod = Integer.parseInt(txtCodigo.getText());
-        Departamento D = new Departamento(cod, txtNome.getText());
-        ListaDep.add(D);
         
+        //Testa se foi clicado o botão novo ou editar
+        if(modoDep.equals("Novo")){  
+            Departamento D = new Departamento(cod, txtNome.getText());
+            ListaDep.add(D);
+        }else if(modoDep.equals("Editar")){
+            int index = tbl_dep_dpts.getSelectedRow();
+            ListaDep.get(index).setCodigo(cod);
+            ListaDep.get(index).setNome(txtNome.getText());
+        }
+
         LoadTableDep();
+        modoDep = "Navegar";
+        ManipulaInterfaceDep();
+        txtCodigo.setText("");
+        txtNome.setText("");
     }//GEN-LAST:event_btnSalvarDepActionPerformed
 
     private void txtNomeFuncActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeFuncActionPerformed
@@ -401,23 +482,52 @@ public class FrontFinal extends javax.swing.JFrame {
         txtCodigo.setText("");
         txtNome.setText("");
 
-        btnSalvarDep.setEnabled(true);
-        btnCancelarDep.setEnabled(true);
-        txtCodigo.setEnabled(true);
-        txtNome.setEnabled(true);
+        modoDep = "Novo";
+        ManipulaInterfaceDep();
     }//GEN-LAST:event_btnNovoDepActionPerformed
 
     private void btnCancelarDepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarDepActionPerformed
         txtCodigo.setText("");
         txtNome.setText("");
-        
-        btnSalvarDep.setEnabled(false);
-        btnCancelarDep.setEnabled(false);
+
+        modoDep = "Navegar";
+        ManipulaInterfaceDep();
     }//GEN-LAST:event_btnCancelarDepActionPerformed
 
     private void btnNovoFuncionariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoFuncionariosActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnNovoFuncionariosActionPerformed
+
+    private void btnEditarDepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarDepActionPerformed
+        modoDep = "Editar";
+        ManipulaInterfaceDep();
+    }//GEN-LAST:event_btnEditarDepActionPerformed
+
+    private void tbl_dep_dptsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_dep_dptsMouseClicked
+        //Pega a linha selecionada
+        int index = tbl_dep_dpts.getSelectedRow();
+
+        //Testa a validade da linha selecionada
+        if (index >= 0 && index < ListaDep.size()) {
+            //Seleciona a linha e preenche os campos para edição
+            Departamento D = ListaDep.get(index);
+            txtCodigo.setText(String.valueOf(D.getCodigo()));
+            txtNome.setText(D.getNome());
+            //Manipula a interface para o modo seleção
+            modoDep = "Selecao";
+            ManipulaInterfaceDep();
+        }
+    }//GEN-LAST:event_tbl_dep_dptsMouseClicked
+
+    private void btnExcluirDepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirDepActionPerformed
+        int index = tbl_dep_dpts.getSelectedRow();
+        if(index>=0 && index<ListaDep.size()){
+            ListaDep.remove(index);
+        }
+        LoadTableDep();
+        modoDep = "Navegar";
+        ManipulaInterfaceDep();
+    }//GEN-LAST:event_btnExcluirDepActionPerformed
 
     public static void main(String args[]) {
 
